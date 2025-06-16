@@ -167,3 +167,7 @@ C:\Dev\BlogAs\BlogAs\obj\Debug\net8.0\refint\BlogAs.dll
 C:\Dev\BlogAs\BlogAs\obj\Debug\net8.0\BlogAs.pdb
 C:\Dev\BlogAs\BlogAs\obj\Debug\net8.0\BlogAs.genruntimeconfig.cache
 C:\Dev\BlogAs\BlogAs\obj\Debug\net8.0\ref\BlogAs.dll
+C:\Dev\BlogAs\BlogAs\obj\Debug\net8.0\BlogAs.sourcelink.json
+C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\FluentValidation.dll
+C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
+C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
