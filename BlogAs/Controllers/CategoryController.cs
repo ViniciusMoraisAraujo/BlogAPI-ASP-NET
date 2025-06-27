@@ -10,6 +10,11 @@ namespace BlogAs.Controllers;
 [ApiController]
 public class CategoryController : ControllerBase
 {
+    private readonly IValidator<EditorCategoryViewModel> _validator;
+    public CategoryController(IValidator<EditorCategoryViewModel> validator)
+    {
+        _validator = validator;
+    }
     [HttpGet("v1/categories")]
     public async Task<IActionResult> GetAsync([FromServices] BlogDataContext context)
     {
@@ -35,11 +40,11 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost("v1/categories")]
-    public async Task<IActionResult> CreateAsync([FromServices] BlogDataContext context, [FromBody] EditorCategoryViewModel category, [FromServices] IValidator<EditorCategoryViewModel> validator)
+    public async Task<IActionResult> CreateAsync([FromServices] BlogDataContext context, [FromBody] EditorCategoryViewModel category)
     {
         try
         {
-            var validationResult = await validator.ValidateAsync(category);
+            var validationResult = await _validator.ValidateAsync(category);
 
             if (!validationResult.IsValid)
             {
@@ -65,11 +70,11 @@ public class CategoryController : ControllerBase
 
     [HttpPut("v1/categories/{id:int}")]
     public async Task<IActionResult> PutAsync([FromRoute] int id, [FromServices] BlogDataContext context,
-        [FromBody] EditorCategoryViewModel editorCategory, [FromServices]IValidator<EditorCategoryViewModel> validator)
+        [FromBody] EditorCategoryViewModel editorCategory)
     {
         try
         {
-            var validationResult = await validator.ValidateAsync(editorCategory);
+            var validationResult = await _validator.ValidateAsync(editorCategory);
 
             if (!validationResult.IsValid)
             {
