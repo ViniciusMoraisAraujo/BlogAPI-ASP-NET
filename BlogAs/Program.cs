@@ -4,7 +4,9 @@ using BlogAs.Data;
 using BlogAs.Middlewares;
 using BlogAs.Services;
 using BlogAs.Validators;
+using BlogAs.ViewModels;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -28,22 +30,29 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+builder.Services.AddControllers()
+    .AddFluentValidation(fv =>
+    {
+        fv.RegisterValidatorsFromAssemblyContaining<EditorCategoryViewModelValidator>();
+        fv.AutomaticValidationEnabled = true;
+        fv.ImplicitlyValidateChildProperties = true;
+        
+        fv.DisableDataAnnotationsValidation = true;
+    });
+
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
-    options.SuppressModelStateInvalidFilter = true;
+    options.SuppressModelStateInvalidFilter = false;
 });
+
 builder.Services.AddDbContext<BlogDataContext>();
-builder.Services.AddValidatorsFromAssemblyContaining<EditorCategoryViewModelValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterViewModelValidator>();
 builder.Services.AddTransient<TokenService>(); 
 
+
 var app = builder.Build();
-
 app.UseMiddleware<ExceptionMiddleware>();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
