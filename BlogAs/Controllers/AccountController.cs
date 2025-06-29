@@ -12,38 +12,22 @@ namespace BlogAs.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly TokenService _tokenService;
-    private readonly IValidator<RegisterViewModel> _validator;
     
-    public AccountController(TokenService tokenService, IValidator<RegisterViewModel> validator)
+    public AccountController(TokenService tokenService)
     {
         _tokenService = tokenService;
-        _validator = validator;
     }
 
     [HttpPost("v1/accounts")]
-    public async Task<IActionResult> CreateAsync([FromBody] RegisterViewModel model, [FromServices] BlogDataContext context)
+    public async Task<IActionResult> CreateAsync([FromBody] RegisterViewModel model)
     {
-        try
-        {
-            var validationResult = await _validator.ValidateAsync(model);
-
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
-                return BadRequest(new ResultViewModel<string>(errors, "05X16"));
-            }
-
             var user = new User
             {
                 Name = model.Name,
                 Email = model.Email,
                 Slug = model.Email.Replace("@", "-").Replace(".", "-"),
             };
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "05X15 - Internal server error");       
-        }
+        
         return Ok();
     }
     

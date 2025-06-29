@@ -8,10 +8,8 @@ public class UserMap : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        // Tabela
         builder.ToTable("User");
 
-        // Chave Primária
         builder.HasKey(x => x.Id);
 
         // Identity
@@ -26,23 +24,35 @@ public class UserMap : IEntityTypeConfiguration<User>
             .HasColumnType("NVARCHAR")
             .HasMaxLength(80);
 
-        builder.Property(x => x.Bio);
-        builder.Property(x => x.Email);
-        builder.Property(x => x.Image);
-        builder.Property(x => x.PasswordHash);
+        builder.Property(x => x.Bio)
+            .IsRequired(false);
+        
+        builder.Property(x => x.Email)
+            .IsRequired().HasColumnType("VARCHAR")
+            .HasColumnName("Email")
+            .HasMaxLength(160);
+        
+        builder.Property(x => x.Image)
+            .IsRequired(false);
 
+        builder.Property(x => x.PasswordHash)
+            .IsRequired()
+            .HasColumnName("PasswordHash");
+        
         builder.Property(x => x.Slug)
             .IsRequired()
             .HasColumnName("Slug")
             .HasColumnType("VARCHAR")
             .HasMaxLength(80);
+        
+        builder
+            .HasIndex(x => x.Email, "IX_User_Email")
+            .IsUnique();
 
-        // Índices
         builder
             .HasIndex(x => x.Slug, "IX_User_Slug")
             .IsUnique();
 
-        // Relacionamentos
         builder
             .HasMany(x => x.Roles)
             .WithMany(x => x.Users)
