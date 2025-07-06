@@ -53,6 +53,7 @@ C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\Microsoft.OpenApi.dll
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\Mono.TextTemplating.dll
+C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\SecureIdentity.dll
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
