@@ -35,7 +35,7 @@ public class AccountController : ControllerBase
         var password = PasswordGenerator.Generate(25);
         user.PasswordHash = PasswordHasher.Hash(password);
         
-        bool verification = await _context.Users.AnyAsync(x => x.Email == user.Email);
+        bool verification =  _context.Users.Any(x => x.Email == user.Email);
         if (verification)
             return BadRequest(new ResultViewModel<string>("05X17 - Email already registered"));
 
@@ -50,10 +50,18 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost("v1/accounts/login")]
-    public IActionResult Login()
+    public async Task<IActionResult> Login([FromBody] LoginViewModel model)
     {
-        var token = _tokenService.GenerateToken(null);
-        return Ok(token);
+        var user = await _context.Users.AsNoTracking().Include(x => x.Roles)
+            .FirstOrDefaultAsync(x => x.Email == model.Email);
+        
+        if (user == null)
+            return NotFound(new ResultViewModel<string>("05X19 - User not found"));
+        
+        if (!PasswordHasher.Verify(user.PasswordHash, model.Password))
+            return Unauthorized(new ResultViewModel<string>("05X22 - Invalid password"));
+        
+        var token = _tokenService.GenerateToken(user); 
+        return Ok(new ResultViewModel<dynamic>(token));
     }
-    
 }
