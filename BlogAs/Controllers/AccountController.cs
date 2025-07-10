@@ -23,7 +23,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("v1/accounts")]
-    public async Task<IActionResult> CreateAsync([FromBody] RegisterViewModel model)
+    public async Task<IActionResult> CreateAsync([FromBody] RegisterViewModel model, [FromServices] EmailService emailService)
     {
         var user = new User
         {
@@ -41,11 +41,13 @@ public class AccountController : ControllerBase
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
+        
+        emailService.SendEmail(user.Email, user.Email, "Welcome", $"Your password is: {password}");
 
         return Ok(new ResultViewModel<dynamic>(
             new
             {
-                user = user.Email, password
+                user = user.Email
             }));
     }
     

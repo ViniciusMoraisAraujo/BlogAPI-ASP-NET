@@ -27,9 +27,9 @@ void LoadConfiguration(WebApplication app)
     Configuration.ApiKeyName = app.Configuration.GetValue<string>("ApiKeyName");
     Configuration.ApiKey = app.Configuration.GetValue<string>("ApiKey");
     
-    var smpt = new Configuration.SmtpConfiguration();
-    app.Configuration.GetSection("Smtp").Bind(smpt);
-    Configuration.Smpt = smpt;
+    var smtp = new Configuration.SmtpConfiguration();
+    app.Configuration.GetSection("Smtp").Bind(smtp);
+    Configuration.Smtp = smtp;
 }
 
 void ConfigureAuth(WebApplicationBuilder builder)
@@ -67,4 +67,5 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     builder.Services.AddDbContext<BlogDataContext>();
     builder.Services.AddTransient<TokenService>(); 
+    builder.Services.AddTransient<EmailService>();
 }
