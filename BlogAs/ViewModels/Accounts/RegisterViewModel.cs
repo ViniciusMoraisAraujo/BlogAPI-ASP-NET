@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BlogAs.ViewModels;
+﻿namespace BlogAs.ViewModels.Accounts;
 
 public class RegisterViewModel
 {

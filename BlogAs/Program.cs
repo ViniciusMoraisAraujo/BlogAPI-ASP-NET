@@ -16,6 +16,7 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 app.MapControllers();
 LoadConfiguration(app);
 

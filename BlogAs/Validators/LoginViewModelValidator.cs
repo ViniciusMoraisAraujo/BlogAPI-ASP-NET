@@ -1,4 +1,5 @@
 ﻿using BlogAs.ViewModels;
+using BlogAs.ViewModels.Accounts;
 using FluentValidation;
 
 namespace BlogAs.Validators;

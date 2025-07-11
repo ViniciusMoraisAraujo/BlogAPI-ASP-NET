@@ -1,5 +1,6 @@
 ﻿using BlogAs.Data;
 using BlogAs.ViewModels;
+using BlogAs.ViewModels.Accounts;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

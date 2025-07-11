@@ -1,4 +1,4 @@
-﻿namespace BlogAs.ViewModels;
+﻿namespace BlogAs.ViewModels.Accounts;
 
 public class LoginViewModel
 {

@@ -1,8 +1,10 @@
-﻿using BlogAs.Data;
+﻿using System.Text.RegularExpressions;
+using BlogAs.Data;
 using BlogAs.Models;
 using BlogAs.Services;
 using BlogAs.ViewModels;
-using FluentValidation;
+using BlogAs.ViewModels.Accounts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecureIdentity.Password;
@@ -65,5 +67,27 @@ public class AccountController : ControllerBase
         
         var token = _tokenService.GenerateToken(user); 
         return Ok(new ResultViewModel<dynamic>(token));
+    }
+    
+    [Authorize]
+    [HttpPost("v1/accounts/upload-image")]
+    public async Task<IActionResult> UploadImage([FromBody] UploadImageViewModel model)
+    {
+        var fileName = $"{Guid.NewGuid().ToString()}.jpg";
+        var data = new Regex(@"^data:image\/[a-z]+;base64").Replace(model.Base64Image, "");
+        var bytes = Convert.FromBase64String(data);
+
+        try
+        {
+            await System.IO.File.WriteAllBytesAsync($"wwwroot/images/{fileName}", bytes);
+        }
+        catch  
+        {
+            return NotFound(new ResultViewModel<string>("05X23 - Error uploading image"));
+        }
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == User.Identity.Name);
+        user.Image = $"https://localhost:5001/images/{fileName}";
+        await _context.SaveChangesAsync();
+        return Ok(new ResultViewModel<dynamic>(fileName));
     }
 }
