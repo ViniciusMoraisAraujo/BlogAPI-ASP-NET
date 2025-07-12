@@ -48,8 +48,14 @@ public class PostController : ControllerBase
     public async Task<IActionResult> CreatedAsync([FromBody] EditorPostViewModel editorPost)
     {
         var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == editorPost.CategoryId);
+        if (category == null)
+            return NotFound(new ResultViewModel<string>("05X17 - Category not found"));
         var author = await _context.Users.FirstOrDefaultAsync(x => x.Id == editorPost.AuthorId);
+        if (author == null)
+            return NotFound(new ResultViewModel<string>("05X18 - Author not found"));
         var tag = await _context.Tags.FirstOrDefaultAsync(x => x.Id == editorPost.TagId);
+        if (tag == null)
+            return NotFound(new ResultViewModel<string>("05X19 - Tag not found"));
         var postModel = new Post
         {
             Id = 0, 
@@ -58,8 +64,14 @@ public class PostController : ControllerBase
             Author = author,
             CreateDate = DateTime.Now,
             LastUpdateDate = DateTime.Now, 
-            Body = editorPost.Body
+            Tags = [tag],
+            Body = editorPost.Body,
+            Summary = editorPost.Summary,
+            Slug = editorPost.Title.Replace(" ", "-").ToLower()
         };
-        return Ok();
+        await _context.Posts.AddAsync(postModel);
+        await _context.SaveChangesAsync();
+        
+        return Ok(new ResultViewModel<dynamic>(postModel, "Post created successfully"));
     }
 }
