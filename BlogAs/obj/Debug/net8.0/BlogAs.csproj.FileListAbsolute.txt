@@ -1,5 +1,6 @@
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\appsettings.Development.json
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\appsettings.json
+C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\BlogAs.staticwebassets.runtime.json
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\BlogAs.exe
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\BlogAs.deps.json
 C:\Dev\BlogAs\BlogAs\bin\Debug\net8.0\BlogAs.runtimeconfig.json
