@@ -65,7 +65,7 @@ void ConfigureServices(WebApplicationBuilder builder)
     });
     
     builder.Services.AddControllers().ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = false; });
-
+    builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
     builder.Services.AddDbContext<BlogDataContext>();
     builder.Services.AddTransient<TokenService>(); 
     builder.Services.AddTransient<EmailService>();

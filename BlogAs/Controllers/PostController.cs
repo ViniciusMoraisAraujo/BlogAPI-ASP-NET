@@ -11,14 +11,14 @@ namespace BlogAs.Controllers;
 public class PostController : ControllerBase
 {
     private readonly BlogDataContext _context;
-   
+
     public PostController(BlogDataContext context)
     {
         _context = context;
     }
-    
+
     [HttpGet("v1/posts")]
-    public async Task<IActionResult> GetAsync([FromQuery]int page = 1, [FromQuery]int pageSize = 10)
+    public async Task<IActionResult> GetAsync([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var posts = await _context.Posts.AsNoTracking().Include(x => x.Category)
             .Include(x => x.Author).Select(x => new ListPostsViewModel
@@ -34,7 +34,7 @@ public class PostController : ControllerBase
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
-        
+
         return Ok(new ResultViewModel<dynamic>(new
         {
             page,
@@ -42,6 +42,26 @@ public class PostController : ControllerBase
             total = await _context.Posts.CountAsync(),
             posts
         }));
+    }
+
+    [HttpGet("v1/posts/{id:int}")]
+    public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
+    {
+        var post = await _context.Posts.Include(post => post.Category)
+            .Include(post => post.Author).FirstOrDefaultAsync(x => x.Id == id);
+        if (post == null)
+            return NotFound(new ResultViewModel<string>("05X16 - Post not found"));
+
+        var response = new PostResponseViewModel
+        {
+            Id = post.Id,
+            Title = post.Title,
+            Slug = post.Slug,
+            CategoryName = post.Category.Name,
+            AuthorName = post.Author.Name,
+        };
+        
+        return Ok(new ResultViewModel<PostResponseViewModel>(response));
     }
 
     [HttpPost("v1/posts")]
@@ -58,7 +78,6 @@ public class PostController : ControllerBase
             return NotFound(new ResultViewModel<string>("05X19 - Tag not found"));
         var postModel = new Post
         {
-            Id = 0, 
             Title = editorPost.Title, 
             Category = category, 
             Author = author,
@@ -71,7 +90,57 @@ public class PostController : ControllerBase
         };
         await _context.Posts.AddAsync(postModel);
         await _context.SaveChangesAsync();
+
+        var response = new PostResponseViewModel
+        {
+            Id = postModel.Id,
+            Title = postModel.Title,
+            Slug = postModel.Slug,
+            CategoryName = postModel.Category.Name,
+            AuthorName = postModel.Author.Name,
+        };
+
+        return Ok(new ResultViewModel<PostResponseViewModel>(response, "Post Created"));
+    }
+
+    [HttpPut("v1/posts/{id:int}")]
+
+    public async Task<IActionResult> EditorAsync([FromRoute] int id, [FromBody] EditorPostViewModel editorPost)
+    {
+        var postToUpdate = await _context.Posts.Include(post => post.Category).Include(author => author.Author).FirstOrDefaultAsync(x => x.Id == id);
+        if (postToUpdate == null)
+            return NotFound(new ResultViewModel<string>("05X20 - Post not found"));
         
-        return Ok(new ResultViewModel<dynamic>(postModel, "Post created successfully"));
+        postToUpdate.Title = editorPost.Title;
+        postToUpdate.Body = editorPost.Body;
+        postToUpdate.Summary = editorPost.Summary;
+        postToUpdate.LastUpdateDate = DateTime.Now;
+        postToUpdate.Slug = editorPost.Title.Replace(" ", "-").ToLower();
+        _context.Posts.Update(postToUpdate);
+        await _context.SaveChangesAsync();
+
+        var response = new PostResponseViewModel
+        {
+            Id = postToUpdate.Id,
+            Title = postToUpdate.Title,
+            Slug = postToUpdate.Slug,
+            CategoryName = postToUpdate.Category.Name,
+            AuthorName = postToUpdate.Author.Name,
+        };
+        
+        return Ok(new ResultViewModel<PostResponseViewModel>(response, "Post Updated"));
+    }
+    [HttpDelete("v1/posts/{id:int}")]
+    public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+    {
+        var postToDelete = await _context.Posts.FirstOrDefaultAsync(x => x.Id == id);
+        if (postToDelete == null)
+            return NotFound(new ResultViewModel<string>("05X21 - Post not found"));
+        
+        _context.Posts.Remove(postToDelete);
+        await _context.SaveChangesAsync();
+        
+        return Ok(new ResultViewModel<dynamic>(postToDelete.Id, "Post Deleted"));
     }
 }
+
