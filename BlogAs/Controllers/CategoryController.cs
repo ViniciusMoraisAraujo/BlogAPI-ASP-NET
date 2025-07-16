@@ -4,6 +4,7 @@ using BlogAs.ViewModels;
 using BlogAs.ViewModels.Categories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BlogAs.Controllers;
 
@@ -18,9 +19,16 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet("v1/categories")]
-    public async Task<IActionResult> GetAsync()
+    public IActionResult Get([FromServices] IMemoryCache cache)
     {
-        var categories = await _context.Categories.ToListAsync();
+        var categories = cache.GetOrCreate("CategoriesCache", entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+            return  _context.Categories.ToList();
+        });
+        if (categories == null)
+            return NotFound(new ResultViewModel<string>("05X17 - Category not found"));
+        
         return Ok(new ResultViewModel<List<Category>>(categories));
     }
 

@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Text;
 using BlogAs;
 using BlogAs.Data;
@@ -6,18 +7,27 @@ using BlogAs.Services;
 using BlogAs.Validators;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigureAuth(builder);
 ConfigureServices(builder);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseResponseCompression();
 app.UseStaticFiles();
 app.MapControllers();
+app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
 LoadConfiguration(app);
 
 app.Run();
@@ -66,7 +76,20 @@ void ConfigureServices(WebApplicationBuilder builder)
     
     builder.Services.AddControllers().ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = false; });
     builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
-    builder.Services.AddDbContext<BlogDataContext>();
+    
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<BlogDataContext>(options => options.UseSqlServer(connectionString));
     builder.Services.AddTransient<TokenService>(); 
     builder.Services.AddTransient<EmailService>();
+
+    builder.Services.AddMemoryCache();
+    builder.Services.AddResponseCompression(options =>
+        {
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+    builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+    {
+        options.Level = CompressionLevel.Optimal;
+    });
 }
+
