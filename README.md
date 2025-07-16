@@ -1,36 +1,34 @@
-﻿# 📝 BlogAPI - ASP.NET Core Blog RESTful API
+﻿# 📰 BlogAPI - ASP.NET Core
 
-Uma API REST desenvolvida em **ASP.NET Core** com foco em **aprendizado prático**, **organização de código** e **boas práticas de backend**.  
-Idealizada para simular a estrutura de um sistema real de blog, incluindo postagens, categorias e usuários.
+![Status](https://img.shields.io/badge/status-finalizado-green)
+![Language](https://img.shields.io/badge/C%23-ASP.NET-blue)
+![Database](https://img.shields.io/badge/SQL%20Server-Database-red)
+![Swagger](https://img.shields.io/badge/Swagger-UI-blueviolet)
 
-> 🚧 Projeto em andamento – evolução constante como parte da minha jornada de aprendizado .NET.
+## 📝 Descrição
 
----
+API RESTful desenvolvida em **ASP.NET Core** com foco em **aprendizado e prática de construção de APIs**, realizando **CRUD de posts e categorias**, autenticação via **JWT** e envio de senhas de novos usuários por email.  
+Ideal para **estudo de ASP.NET Core, EF Core, autenticação e boas práticas em APIs REST**.
 
-## 🎯 Sobre o Projeto
+## 🚀 Funcionalidades
 
-Este projeto tem como objetivo consolidar meus conhecimentos em desenvolvimento backend com C# e ASP.NET Core.  
-A ideia é construir uma base sólida para APIs RESTful com boas práticas como separação de responsabilidades, Entity Framework, autenticação e testes.
+- ✅ CRUD completo de **posts**
+- ✅ CRUD completo de **categorias**
+- ✅ **Autenticação JWT** com login e registro
+- ✅ Envio de senha por **email para novos usuários**
+- ✅ Validações robustas com **FluentValidation**
+- ✅ Documentação automática via **Swagger**
+- ✅ Paginação e filtragem de listagens
 
+## 🛠️ Tecnologias utilizadas
 
----
+- **ASP.NET Core**
+- **Entity Framework Core**
+- **SQL Server**
+- **FluentValidation**
+- **Swagger**
+- **JWT Bearer Authentication**
 
-## 🔍 Funcionalidades (até o momento)
+## 🖼️ Print do Swagger
 
-- 📄 CRUD de Postagens
-- 📂 CRUD de Categorias
-- 👤 CRUD de Autores (usuários)
-- 🔐 Autenticação com JWT (em desenvolvimento)
-- 🔎 Filtros por categoria e busca por título (em breve)
-
----
-
-## 🛠 Tecnologias Utilizadas
-
-![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
-![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)
-![Entity Framework Core](https://img.shields.io/badge/EF_Core-6DB33F?style=for-the-badge&logo=entity-framework&logoColor=white)
-![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)
-
----
-
+![Preview do Swagger](docs/swagger-preview.png)
