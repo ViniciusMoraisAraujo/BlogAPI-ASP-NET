@@ -47,7 +47,7 @@ public class PostController : ControllerBase
     [HttpGet("v1/posts/{id:int}")]
     public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
     {
-        var post = await _context.Posts.Include(post => post.Category)
+        var post = await _context.Posts.AsNoTracking().Include(post => post.Category)
             .Include(post => post.Author).FirstOrDefaultAsync(x => x.Id == id);
         if (post == null)
             return NotFound(new ResultViewModel<string>("05X16 - Post not found"));
@@ -64,6 +64,38 @@ public class PostController : ControllerBase
         return Ok(new ResultViewModel<PostResponseViewModel>(response));
     }
 
+    [HttpGet("v1/posts/category/{category}")]
+    public async Task<IActionResult> GetByCategoryAsync([FromRoute] string category,[FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var count = await _context.Posts.AsNoTracking().Where(post => post.Category.Slug == category ).CountAsync();
+        var posts = await _context.Posts
+            .AsNoTracking()
+            .Include(post => post.Author)
+            .Include(post => post.Category)
+            .Where(post => post.Category.Slug == category)
+            .Select(x => new ListPostsViewModel
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Slug = x.Slug,
+                LastUpdateDate = x.LastUpdateDate,
+                Category = x.Category.Name,
+                Author = $"{x.Author.Name} ({x.Author.Email})"
+            })
+            .OrderByDescending(x => x.LastUpdateDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return Ok(new ResultViewModel<dynamic>(new
+        {
+            total = count,
+            page,
+            pageSize,
+            posts
+        }));
+    }
+    
     [HttpPost("v1/posts")]
     public async Task<IActionResult> CreatedAsync([FromBody] EditorPostViewModel editorPost)
     {
@@ -130,6 +162,7 @@ public class PostController : ControllerBase
         
         return Ok(new ResultViewModel<PostResponseViewModel>(response, "Post Updated"));
     }
+    
     [HttpDelete("v1/posts/{id:int}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] int id)
     {
